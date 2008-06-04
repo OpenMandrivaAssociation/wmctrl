@@ -32,7 +32,6 @@ this specification.
 %setup -q
 
 %build
-export CFLAGS="-O2 -g -pipe -fexceptions -fstack-protector --param=ssp-buffer-size=4 -fomit-frame-pointer -march=i586 -mtune=generic -fasynchronous-unwind-tables"
 %configure2_5x
 %make
 
