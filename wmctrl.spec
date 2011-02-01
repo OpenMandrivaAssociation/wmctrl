@@ -1,6 +1,6 @@
 %define	name	wmctrl
 %define	version	1.07
-%define	release	%mkrel 3
+%define	release	%mkrel 4
 
 Name:		%name
 Version:	%version 
@@ -10,7 +10,9 @@ Group:		System/X11
 Url:		http://sweb.cz/tripie/utils/wmctrl/
 Source:		%name-%version.tar.bz2
 Summary:	Command line tool to interact with an EWMH/NetWM compatible X Window Manager
-BuildRequires:	glib2-devel X11-devel
+BuildRequires:	glib2-devel
+BuildRequires:	libx11-devel
+BuildRequires:	libxmu-devel
 BuildRoot:	%{_tmppath}/%{name}-%{version}-build
 
 %description
@@ -37,7 +39,7 @@ this specification.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%makeinstall
+%makeinstall_std
 
 %clean
 rm -rf $RPM_BUILD_ROOT
