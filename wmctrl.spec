@@ -1,6 +1,6 @@
 %define	name	wmctrl
 %define	version	1.07
-%define	release	%mkrel 5
+%define	release	%mkrel 6
 
 Name:		%name
 Version:	%version 
@@ -15,6 +15,8 @@ BuildRequires:	libx11-devel
 BuildRequires:	libxmu-devel
 BuildRoot:	%{_tmppath}/%{name}-%{version}-build
 Patch0:		0001-Fix-desktop-id-parsing.patch
+Patch1:		0002-Extend-desktop-ID-semantic-the-name-of-the-desktop-i.patch
+Patch2:		0003-Make-list_desktop-use-the-new-desktop-helpers.patch
 
 %description
 Wmctrl provides command line access to almost all the features defined
@@ -34,6 +36,8 @@ this specification.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
+%patch2 -p1
 
 %build
 %configure2_5x
