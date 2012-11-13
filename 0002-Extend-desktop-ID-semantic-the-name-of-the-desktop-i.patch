@@ -1,0 +1,158 @@
+From 0148affc1fda1d7594d9118a5dc4973712ded606 Mon Sep 17 00:00:00 2001
+From: Franck Bui-Huu <fbuihuu@gmail.com>
+Date: Thu, 11 Oct 2012 13:17:50 +0000
+Subject: [PATCH 2/3] Extend desktop ID semantic: the name of the desktop is
+ now supported
+
+We can now use the name of the desktop to specify which desktop
+is targeted.
+
+Signed-off-by: Franck Bui-Huu <fbuihuu@gmail.com>
+---
+ main.c |  118 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 109 insertions(+), 9 deletions(-)
+
+diff --git a/main.c b/main.c
+index f08dddd..9514ab1 100644
+--- a/main.c
++++ b/main.c
+@@ -615,16 +615,112 @@ static int change_number_of_desktops (Display *disp) {/*{{{*/
+         n, 0, 0, 0, 0);
+ }/*}}}*/
+ 
+-static int switch_desktop (Display *disp) {/*{{{*/
++static int get_desktop_number(Display *disp)
++{
++    static int _desktop_number = -1;
++    static gchar *properties[] = {
++        "_NET_NUMBER_OF_DESKTOPS",
++	"_WIN_WORKSPACE_COUNT"
++    };
++    unsigned long *n;
++    Window root;
++    int i;
++
++    if (_desktop_number >=0)
++        return _desktop_number;
++
++    root = DefaultRootWindow(disp);
++    for (i = 0; i < 2; i++) {
++        gchar *p = properties[i];
++        n = (unsigned long *)get_property(disp, root, XA_CARDINAL, p, NULL);
++        if (n) {
++            _desktop_number = (int)*n;
++            g_free(n);
++            return _desktop_number;
++        }
++    }
++
++    fputs("Cannot get number of desktops properties. "
++          "(_NET_NUMBER_OF_DESKTOPS or _WIN_WORKSPACE_COUNT)"
++          "\n", stderr);
++    return -1;
++}
++
++static gchar **get_desktop_names(Display *disp)
++{
++    static gchar **_desktop_names;
++    gboolean use_utf8 = !options.wa_desktop_titles_invalid_utf8;
++    Window root;
++    gchar **ret = NULL;
++    gchar *list = NULL;
++    gchar *p;
++    unsigned long list_bytes; /* total number of bytes of the name list  */
++    int i, desktop_num;
++
++    if (_desktop_names)
++        return _desktop_names;
++
++    root = DefaultRootWindow(disp);
++    if (use_utf8)
++        list = get_property(disp, root, XInternAtom(disp, "UTF8_STRING", False),
++				    "_NET_DESKTOP_NAMES", &list_bytes);
++    if (!list) {
++        list = get_property(disp, root, XA_STRING,
++				    "_WIN_WORKSPACE_NAMES", &list_bytes);
++        if (!list) {
++            p_verbose("Cannot get desktop names properties. "
++                      "(_NET_DESKTOP_NAMES or _WIN_WORKSPACE_NAMES)"
++                      "\n");
++            goto out;;
++        }
++        use_utf8 = FALSE;
++    }
++
++    desktop_num = get_desktop_number(disp);
++    if (desktop_num < 0)
++        goto out;
++    _desktop_names = g_malloc0((desktop_num+1) * sizeof(char *));
++
++    for (i = 0, p = list; i < desktop_num; i++) {
++        /* Assume that unnamed desktop are named automatically */
++        _desktop_names[i] = get_output_str(p, use_utf8);
++        p = strchr(p, '\0') + 1;
++    }
++    ret = _desktop_names;
++out:
++    g_free(list);
++    return ret;
++}
++
++static int parse_desktop_id(Display *disp, const char *id)
++{
+     char *s;
+     int target = 0;
++    gchar **names;
+ 
+-    target = strtol(options.param, &s, 10);
+-    if (*s) {
+-        fputs("Invalid desktop ID.\n", stderr);
+-        return EXIT_FAILURE;
++    /* first try the numerical value */
++    target = strtol(id, &s, 10);
++    if (*s == 0)
++	    return target;
++
++    /* otherwise the id might be the desktop name */
++    names = get_desktop_names(disp);
++    for (target = 0; names[target]; target++) {
++	    if (strcmp(names[target], id) == 0)
++		    return target;
+     }
+-    
++
++    fputs("Invalid desktop ID.\n", stderr);
++    return -1;
++}
++
++static int switch_desktop (Display *disp) {/*{{{*/
++    int target;
++
++    target = parse_desktop_id(disp, options.param);
++    if (target < 0)
++        return target;
++
+     return client_msg(disp, DefaultRootWindow(disp), "_NET_CURRENT_DESKTOP", 
+             (unsigned long)target, 0, 0, 0, 0);
+ }/*}}}*/
+@@ -892,10 +988,14 @@ static int action_window (Display *disp, Window win, char mode) {/*{{{*/
+             /* change state of a window => -r -b */
+             return window_state(disp, win, options.param);
+         
+-        case 't':
++        case 't': {
+             /* move the window to the specified desktop => -r -t */
+-            return window_to_desktop(disp, win, atoi(options.param));
+-        
++            int id = parse_desktop_id(disp, options.param);
++            if (id < 0)
++                return EXIT_FAILURE;
++
++            return window_to_desktop(disp, win, id);
++        }
+         case 'R':
+             /* move the window to the current desktop and activate it => -r */
+             if (window_to_desktop(disp, win, -1) == EXIT_SUCCESS) {
+-- 
+1.7.9.2
+
