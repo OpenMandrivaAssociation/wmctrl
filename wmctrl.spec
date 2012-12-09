@@ -1,6 +1,6 @@
 %define	name	wmctrl
 %define	version	1.07
-%define	release	%mkrel 6
+%define	release	%mkrel 5
 
 Name:		%name
 Version:	%version 
@@ -9,14 +9,13 @@ License:	GPLv2+
 Group:		System/X11
 Url:		http://sweb.cz/tripie/utils/wmctrl/
 Source:		%name-%version.tar.bz2
+Patch0:         http://ftp.de.debian.org/debian/pool/main/w/wmctrl/wmctrl_1.07-6.diff.gz
+Patch1:         wmctrl-sticky-workspace.patch
 Summary:	Command line tool to interact with an EWMH/NetWM compatible X Window Manager
 BuildRequires:	glib2-devel
 BuildRequires:	libx11-devel
 BuildRequires:	libxmu-devel
 BuildRoot:	%{_tmppath}/%{name}-%{version}-build
-Patch0:		0001-Fix-desktop-id-parsing.patch
-Patch1:		0002-Extend-desktop-ID-semantic-the-name-of-the-desktop-i.patch
-Patch2:		0003-Make-list_desktop-use-the-new-desktop-helpers.patch
 
 %description
 Wmctrl provides command line access to almost all the features defined
@@ -37,7 +36,6 @@ this specification.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 %build
 %configure2_5x
@@ -55,3 +53,26 @@ rm -rf $RPM_BUILD_ROOT
 %doc AUTHORS COPYING ChangeLog README
 %_bindir/*
 %_mandir/man1/wmctrl.1.*
+
+
+%changelog
+* Mon Jun  4 2012 Arkady L. Shane <arkady.shane@rosalab.ru> 1.0.7-5
+- apply fedora patches
+
+* Tue Feb 01 2011 Funda Wang <fwang@mandriva.org> 1.07-4mdv2011.0
++ Revision: 634785
+- simplify BR
+
+* Wed Sep 09 2009 Thierry Vignaud <tv@mandriva.org> 1.07-3mdv2010.0
++ Revision: 434778
+- rebuild
+
+* Sat Aug 09 2008 Thierry Vignaud <tv@mandriva.org> 1.07-2mdv2009.0
++ Revision: 269708
+- rebuild early 2009.0 package (before pixel changes)
+
+* Wed Jun 04 2008 Pascal Terjan <pterjan@mandriva.org> 1.07-1mdv2009.0
++ Revision: 214993
+- import wmctrl
+
+
