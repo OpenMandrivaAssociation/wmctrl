@@ -1,6 +1,6 @@
 %define	name	wmctrl
 %define	version	1.07
-%define	release	%mkrel 5
+%define release 	6
 
 Name:		%name
 Version:	%version 
@@ -15,7 +15,6 @@ Summary:	Command line tool to interact with an EWMH/NetWM compatible X Window Ma
 BuildRequires:	glib2-devel
 BuildRequires:	pkgconfig(x11)
 BuildRequires:	pkgconfig(xmu)
-BuildRoot:	%{_tmppath}/%{name}-%{version}-build
 
 %description
 Wmctrl provides command line access to almost all the features defined
