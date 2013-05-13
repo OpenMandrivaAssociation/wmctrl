@@ -13,8 +13,8 @@ Patch0:         http://ftp.de.debian.org/debian/pool/main/w/wmctrl/wmctrl_1.07-6
 Patch1:         wmctrl-sticky-workspace.patch
 Summary:	Command line tool to interact with an EWMH/NetWM compatible X Window Manager
 BuildRequires:	glib2-devel
-BuildRequires:	libx11-devel
-BuildRequires:	libxmu-devel
+BuildRequires:	pkgconfig(x11)
+BuildRequires:	pkgconfig(xmu)
 BuildRoot:	%{_tmppath}/%{name}-%{version}-build
 
 %description
