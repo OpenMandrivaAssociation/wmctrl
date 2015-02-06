@@ -1,6 +1,6 @@
 %define	name	wmctrl
 %define	version	1.07
-%define release 	6
+%define release 	7
 
 Name:		%name
 Version:	%version 
