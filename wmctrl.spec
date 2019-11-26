@@ -1,7 +1,7 @@
 
 Name:		wmctrl
 Version:	1.07
-Release:	1
+Release:	8
 License:	GPLv2+
 Group:		System/X11
 Url:		http://sweb.cz/tripie/utils/wmctrl/
