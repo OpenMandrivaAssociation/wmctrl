@@ -1,10 +1,7 @@
-%define	name	wmctrl
-%define	version	1.07
-%define release 	7
 
-Name:		%name
-Version:	%version 
-Release:	%release
+Name:		wmctrl
+Version:	1.07
+Release:	1
 License:	GPLv2+
 Group:		System/X11
 Url:		http://sweb.cz/tripie/utils/wmctrl/
@@ -12,7 +9,7 @@ Source:		%name-%version.tar.bz2
 Patch0:         http://ftp.de.debian.org/debian/pool/main/w/wmctrl/wmctrl_1.07-6.diff.gz
 Patch1:         wmctrl-sticky-workspace.patch
 Summary:	Command line tool to interact with an EWMH/NetWM compatible X Window Manager
-BuildRequires:	glib2-devel
+BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig(x11)
 BuildRequires:	pkgconfig(xmu)
 
@@ -37,12 +34,12 @@ this specification.
 %patch1 -p1
 
 %build
-%configure2_5x
-%make
+%configure
+%make_build
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%makeinstall_std
+%make_install
 
 %clean
 rm -rf $RPM_BUILD_ROOT
