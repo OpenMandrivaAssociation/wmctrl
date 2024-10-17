@@ -4,7 +4,7 @@ Version:	1.07
 Release:	8
 License:	GPLv2+
 Group:		System/X11
-Url:		http://sweb.cz/tripie/utils/wmctrl/
+Url:		https://sweb.cz/tripie/utils/wmctrl/
 Source:		%name-%version.tar.bz2
 Patch0:         http://ftp.de.debian.org/debian/pool/main/w/wmctrl/wmctrl_1.07-6.diff.gz
 Patch1:         wmctrl-sticky-workspace.patch
